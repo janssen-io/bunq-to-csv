@@ -11,8 +11,8 @@ namespace BunqDownloader
         [Description("--upToDate:\t\tSet the date up to where the transactions must be read (exclusive).")]
         public DateTime UpToDate { get; set; } = DateTime.Today;
 
-        [Description("--outputPath:\t\tSet the location of the csv.")]
-        public string OutputPath { get; set; } = $"bunq-{DateTime.Today:yyyyMMdd}.csv";
+        [Description("--outputPath:\t\tSet the location of the csv, leave empty for stdout.")]
+        public string OutputPath { get; set; } = "";
 
         [Description("--configDirectory:\tSet the location of bunq and pager configuration.")]
         public string ConfigDirectory { get; set; } = "./";
@@ -33,7 +33,7 @@ namespace BunqDownloader
                     property.GetCustomAttributes(typeof(DescriptionAttribute), false)[0];
 
                 var value = property.GetValue(defaultParams);
-                Console.WriteLine($"{attr.Description} (default: {value ?? "null"})");
+                Console.WriteLine($"{attr.Description} (default: '{value ?? "null"}')");
             }
         }
     }

@@ -9,8 +9,6 @@ namespace BunqDownloader.Bunq
     public class Pager
     {
         private readonly int pageSize;
-        private DateTime fromDate;
-        private DateTime upToAndIncludingDate;
 
         public Pager(): this(50) { }
 
@@ -21,23 +19,23 @@ namespace BunqDownloader.Bunq
 
         public IEnumerable<Payment> Read(DateTime fromDate, DateTime upToDate)
         {
-            if (fromDate >= upToDate)
+            if (fromDate.Date >= upToDate.Date)
             {
                 throw new ArgumentException($"Invalid date range: {fromDate} to {upToDate}");
             }
 
-            this.fromDate = fromDate;
-            this.upToAndIncludingDate = upToDate.AddDays(-1);
+            fromDate = fromDate.Date;
+            var upToAndIncludingDate = upToDate.AddDays(-1).Date;
 
             foreach (var payment in PagePayments())
             {
-                var createdAt = DateTime.Parse(payment.Created);
-                if (createdAt < this.fromDate)
+                var createdAt = DateTime.Parse(payment.Created).Date;
+                if (createdAt < fromDate)
                 {
                     yield break;
                 }
 
-                if (createdAt <= this.upToAndIncludingDate)
+                if (createdAt <= upToAndIncludingDate)
                 {
                     yield return payment;
                 }

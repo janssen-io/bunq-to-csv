@@ -51,7 +51,7 @@ namespace BunqDownloader
             var pagerConfig = pagerConfigLoader.Read();
             PaymentConverter.Run(pagerConfig, parameters);
 
-            pagerConfigLoader.Write(pagerConfig.WithLastUpToDate(DateTime.Today));
+            pagerConfigLoader.Write(pagerConfig.WithLastUpToDate(parameters.UpToDate));
         }
 
         private static void SetupContext(CommandlineArguments parameters)
