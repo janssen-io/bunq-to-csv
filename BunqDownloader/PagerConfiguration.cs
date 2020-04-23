@@ -11,9 +11,6 @@ namespace BunqDownloader
             if (pageSize < 1)
                 throw new ArgumentException("Page size must be larger than 0.", nameof(pageSize));
 
-            if (lastUpToDate != null && lastUpToDate > DateTime.Today)
-                throw new ArgumentException("Last 'Up to' date cannot be in the future. ", nameof(lastUpToDate));
-
             this.PageSize = pageSize;
             this.LastUpToDate = lastUpToDate;
         }
