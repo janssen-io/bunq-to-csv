@@ -22,8 +22,11 @@ namespace BunqDownloader.Converter
             var today = DateTime.Today;
             var firstDayOfTheMonth = today.AddDays(-1 * today.Day + 1);
 
-            fromDate = parameters.FromDate ?? pagerConfig.LastUpToDate ?? firstDayOfTheMonth;
-            upToAndIncludingDate = parameters.UpToDate.AddDays(-1);
+            fromDate = (parameters.FromDate ?? pagerConfig.LastUpToDate ?? firstDayOfTheMonth).Date;
+            upToAndIncludingDate = parameters.UpToDate.AddDays(-1).Date;
+
+            if (fromDate > upToAndIncludingDate)
+                throw new ArgumentException($"'From' cannot be past 'up to' date: {fromDate:yyyy/MM/dd} - {parameters.UpToDate:yyyy/MM/dd}");
 
             outputPath = parameters.OutputPath;
         }
