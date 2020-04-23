@@ -9,50 +9,47 @@ namespace BunqDownloader.Bunq
     public class Pager
     {
         private readonly int pageSize;
+        private readonly PageOrder order;
 
-        public Pager(): this(50) { }
+        public Pager(): this(50, PageOrder.Ascending) { }
 
-        public Pager(int pageSize)
+        public Pager(int pageSize, PageOrder order)
         {
             this.pageSize = pageSize;
+            this.order = order;
         }
 
-        public IEnumerable<Payment> Read(DateTime fromDate, DateTime upToDate)
-        {
-            if (fromDate.Date >= upToDate.Date)
-            {
-                throw new ArgumentException($"Invalid date range: {fromDate} to {upToDate}");
-            }
-
-            fromDate = fromDate.Date;
-            var upToAndIncludingDate = upToDate.AddDays(-1).Date;
-
-            foreach (var payment in PagePayments())
-            {
-                var createdAt = DateTime.Parse(payment.Created).Date;
-                if (createdAt < fromDate)
-                {
-                    yield break;
-                }
-
-                if (createdAt <= upToAndIncludingDate)
-                {
-                    yield return payment;
-                }
-            }
-        }
-        private IEnumerable<Payment> PagePayments()
+        public IEnumerable<T> Read<T>(Func<IDictionary<string, string>, BunqResponse<List<T>>> ListT)
         {
             var pagination = new Pagination { Count = this.pageSize };
-            var batch = Payment.List(urlParams: pagination.UrlParamsCountOnly);
+            var batch = ListT(pagination.UrlParamsCountOnly);
 
             while(batch.Value.Any())
             {
-                foreach (var payment in batch.Value)
-                    yield return payment;
+                foreach (var resource in batch.Value)
+                    yield return resource;
 
-                batch = Payment.List(urlParams: batch.Pagination.UrlParamsPreviousPage);
+                if (this.order == PageOrder.Ascending)
+                {
+                    if (batch.Pagination.NewerId is null)
+                        yield break;
+
+                    batch = ListT(batch.Pagination.UrlParamsNextPage);
+                }
+                else
+                {
+                    if (batch.Pagination.OlderId is null)
+                        yield break;
+
+                    batch = ListT(batch.Pagination.UrlParamsPreviousPage);
+                }
             }
         }
+    }
+
+    public enum PageOrder
+    {
+        Ascending,
+        Descending
     }
 }

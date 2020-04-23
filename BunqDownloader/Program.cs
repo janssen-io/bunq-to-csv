@@ -49,7 +49,8 @@ namespace BunqDownloader
             var pagerConfigPath = Path.Combine(parameters.ConfigDirectory, "pager.config");
             var pagerConfigLoader = new PagerConfigurationLoader(pagerConfigPath);
             var pagerConfig = pagerConfigLoader.Read();
-            PaymentConverter.Run(pagerConfig, parameters);
+            var converter = new PaymentConverter(pagerConfig, parameters);
+            converter.Run();
 
             pagerConfigLoader.Write(pagerConfig.WithLastUpToDate(parameters.UpToDate));
         }
