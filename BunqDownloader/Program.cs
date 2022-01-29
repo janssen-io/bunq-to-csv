@@ -1,4 +1,7 @@
-﻿using Bunq.Sdk.Context;
+using Bunq.Sdk.Context;
+using Bunq.Sdk.Model.Core;
+using Bunq.Sdk.Model.Generated.Endpoint;
+using Bunq.Sdk.Model.Generated.Object;
 using BunqDownloader.Bunq;
 using BunqDownloader.Converter;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +52,7 @@ namespace BunqDownloader
             var pagerConfigPath = Path.Combine(parameters.ConfigDirectory, "pager.config");
             var pagerConfigLoader = new PagerConfigurationLoader(pagerConfigPath);
             var pagerConfig = pagerConfigLoader.Read();
-            var converter = new PaymentConverter(pagerConfig, parameters);
+            var converter = new PaymentConverter(pagerConfig, parameters, new ConsoleAccountChooser());
             converter.Run();
 
             pagerConfigLoader.Write(pagerConfig.WithLastUpToDate(parameters.UpToDate));

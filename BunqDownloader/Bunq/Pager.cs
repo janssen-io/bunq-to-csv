@@ -19,10 +19,10 @@ namespace BunqDownloader.Bunq
             this.order = order;
         }
 
-        public IEnumerable<T> Read<T>(Func<IDictionary<string, string>, BunqResponse<List<T>>> ListT)
+        public IEnumerable<T> Read<T>(Func<IDictionary<string, string>, BunqResponse<List<T>>> apiCall)
         {
             var pagination = new Pagination { Count = this.pageSize };
-            var batch = ListT(pagination.UrlParamsCountOnly);
+            var batch = apiCall(pagination.UrlParamsCountOnly);
 
             while(batch.Value.Any())
             {
@@ -34,14 +34,14 @@ namespace BunqDownloader.Bunq
                     if (batch.Pagination.NewerId is null)
                         yield break;
 
-                    batch = ListT(batch.Pagination.UrlParamsNextPage);
+                    batch = apiCall(batch.Pagination.UrlParamsNextPage);
                 }
                 else
                 {
                     if (batch.Pagination.OlderId is null)
                         yield break;
 
-                    batch = ListT(batch.Pagination.UrlParamsPreviousPage);
+                    batch = apiCall(batch.Pagination.UrlParamsPreviousPage);
                 }
             }
         }

@@ -12,13 +12,15 @@ namespace BunqDownloader.Converter
 {
     class PaymentConverter
     {
+        private readonly IChooseAccounts accountChooser;
         private readonly DateTime fromDate;
         private readonly DateTime upToAndIncludingDate;
 
         private readonly string outputPath;
 
-        public PaymentConverter(PagerConfiguration pagerConfig, CommandlineArguments parameters)
+        public PaymentConverter(PagerConfiguration pagerConfig, CommandlineArguments parameters, IChooseAccounts accountChooser)
         {
+            this.accountChooser = accountChooser;
             var today = DateTime.Today;
             var firstDayOfTheMonth = today.AddDays(-1 * today.Day + 1);
 
@@ -39,7 +41,8 @@ namespace BunqDownloader.Converter
             using var csvWriter = new TqlCsvWriter(writer);
 
             var accounts = ListAccounts();
-            var paymentsInRange = ListPayments(accounts);
+            var chosenAccounts = accountChooser.Choose(accounts.ToArray());
+            var paymentsInRange = ListPayments(chosenAccounts);
             csvWriter.Write(paymentsInRange);
         }
 
