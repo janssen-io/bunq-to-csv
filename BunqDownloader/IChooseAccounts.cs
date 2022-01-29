@@ -47,13 +47,13 @@ namespace BunqDownloader
 
             if (choice is null)
             {
-                throw new FormatException("User input invalid.");
+                Environment.Exit(0);
             }
 
             int[] choices = Parse(choice);
             if (choices.Length == 0)
             {
-                Console.WriteLine("No choice was made. Please select an account.");
+                Console.WriteLine("No choice was made.");
                 Choose(accounts);
             }
 

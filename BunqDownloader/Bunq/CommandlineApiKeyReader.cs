@@ -7,7 +7,13 @@ namespace BunqDownloader.Bunq
         public string Read()
         {
             Console.Write("API key: ");
-            return Console.ReadLine().Trim();
+            var key = Console.ReadLine();
+            if (key == null)
+            {
+                Environment.Exit(0);
+            }
+            
+            return key.Trim();
         }
     }
 }
